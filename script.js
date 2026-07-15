@@ -1,4 +1,4 @@
-fetch("/api/anthropic", {
+fetch("http://localhost:3000/anthropic", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
