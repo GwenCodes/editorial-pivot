@@ -1,0 +1,29 @@
+{
+  "name": "editorial-pivot",
+  "version": "1.0.0",
+  "description": "Two lightweight, no-build writing tools (plain HTML/CSS/JS) that turn a topic into a finished, human-sounding piece in four steps: outline, your personal angle, draft, then a cleanup pass that flags AI-sounding phrases and em dashes before an AI polish rewrites just the flagged spots. Drafts autosave locally as \"case files\" so you can leave one mid-draft and resume later.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2",
+    "node-fetch": "^3.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GwenCodes/editorial-pivot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/GwenCodes/editorial-pivot/issues"
+  },
+  "homepage": "https://github.com/GwenCodes/editorial-pivot#readme",
+  "devDependencies": {
+    "@ljharb/tsconfig": "^0.3.2"
+  }
+}

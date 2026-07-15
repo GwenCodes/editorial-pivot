@@ -1,0 +1,295 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: #f6f5f2;
+  color: #1c1c1a;
+  margin: 0;
+  padding: 0;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid #1c1c1a;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+header span {
+  font-size: 13px;
+  color: #6b6a66;
+}
+
+.layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  padding: 12px;
+}
+
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b6a66;
+  margin: 0 0 8px;
+}
+
+.draft-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.draft-item {
+  display: block;
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #1c1c1a;
+}
+
+.draft-item:hover {
+  background: #f6f5f2;
+}
+
+.draft-item .status {
+  font-size: 11px;
+  color: #a8631f;
+  display: block;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #a83232;
+  font-size: 15px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #6e1d1d;
+}
+
+.new-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.step-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: #eae8e2;
+  color: #6b6a66;
+  border: 1px solid transparent;
+}
+
+.step-tab.active {
+  background: #1c1c1a;
+  color: #fff;
+}
+
+.step-tab.done {
+  background: #dbe7de;
+  color: #2c5c3f;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  margin: 14px 0 4px;
+}
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 160px;
+  line-height: 1.5;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row > * {
+  flex: 1;
+}
+
+button {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid #1c1c1a;
+  background: #1c1c1a;
+  color: #fff;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #fff;
+  color: #1c1c1a;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  margin: 4px 6px 0 0;
+}
+
+.chip:hover {
+  background: #eae8e2;
+}
+
+.status-line {
+  font-size: 13px;
+  color: #6b6a66;
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+mark {
+  background: #ffe3a1;
+  padding: 0 2px;
+}
+
+mark.dash {
+  background: #f0c2c2;
+}
+
+.flag-summary {
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #6b6a66;
+}
+
+.article-view {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 14px;
+  background: #fafaf8;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.compact-textarea {
+  min-height: 70px;
+}
+
+.tall-textarea {
+  min-height: 160px;
+}
+
+.large-textarea {
+  min-height: 400px;
+}
+
+.panel-copy {
+  font-size: 13px;
+  color: #6b6a66;
+}
+
+.step-panel {
+  display: none;
+}
+
+#ig-count-wrap {
+  display: none;
+}
+
+.draft-empty {
+  font-size: 12px;
+  color: #999;
+}

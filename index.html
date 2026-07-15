@@ -2,245 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Editorial Pivot</title>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        font-family:
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Arial,
-          sans-serif;
-        background: #f6f5f2;
-        color: #1c1c1a;
-        margin: 0;
-        padding: 0;
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 24px 20px 80px;
-      }
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        border-bottom: 2px solid #1c1c1a;
-        padding-bottom: 12px;
-        margin-bottom: 20px;
-      }
-      header h1 {
-        font-size: 20px;
-        margin: 0;
-        letter-spacing: 0.5px;
-      }
-      header span {
-        font-size: 13px;
-        color: #6b6a66;
-      }
-
-      .layout {
-        display: flex;
-        gap: 24px;
-        align-items: flex-start;
-      }
-      .sidebar {
-        width: 210px;
-        flex-shrink: 0;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: #fff;
-        padding: 12px;
-      }
-      .sidebar h3 {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #6b6a66;
-        margin: 0 0 8px;
-      }
-      .draft-row {
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid #eee;
-      }
-      .draft-item {
-        display: block;
-        flex: 1;
-        text-align: left;
-        background: none;
-        border: none;
-        padding: 8px 4px;
-        font-size: 13px;
-        cursor: pointer;
-        color: #1c1c1a;
-      }
-      .draft-item:hover {
-        background: #f6f5f2;
-      }
-      .draft-item .status {
-        font-size: 11px;
-        color: #a8631f;
-        display: block;
-      }
-      .delete-btn {
-        background: none;
-        border: none;
-        color: #a83232;
-        font-size: 15px;
-        padding: 4px 6px;
-        cursor: pointer;
-      }
-      .delete-btn:hover {
-        color: #6e1d1d;
-      }
-      .new-btn {
-        margin-top: 10px;
-        width: 100%;
-      }
-
-      .main {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .steps {
-        display: flex;
-        gap: 6px;
-        margin-bottom: 20px;
-      }
-      .step-tab {
-        flex: 1;
-        text-align: center;
-        padding: 8px 4px;
-        font-size: 12px;
-        border-radius: 4px;
-        background: #eae8e2;
-        color: #6b6a66;
-        border: 1px solid transparent;
-      }
-      .step-tab.active {
-        background: #1c1c1a;
-        color: #fff;
-      }
-      .step-tab.done {
-        background: #dbe7de;
-        color: #2c5c3f;
-      }
-
-      .panel {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 20px;
-      }
-      .panel h2 {
-        margin-top: 0;
-        font-size: 16px;
-      }
-      label {
-        font-size: 13px;
-        font-weight: 600;
-        display: block;
-        margin: 14px 0 4px;
-      }
-      input[type="text"],
-      textarea,
-      select {
-        width: 100%;
-        font-family: inherit;
-        font-size: 14px;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        resize: vertical;
-      }
-      textarea {
-        min-height: 160px;
-        line-height: 1.5;
-      }
-      .row {
-        display: flex;
-        gap: 10px;
-      }
-      .row > * {
-        flex: 1;
-      }
-
-      button {
-        font-family: inherit;
-        font-size: 13px;
-        padding: 8px 14px;
-        border-radius: 4px;
-        border: 1px solid #1c1c1a;
-        background: #1c1c1a;
-        color: #fff;
-        cursor: pointer;
-      }
-      button.secondary {
-        background: #fff;
-        color: #1c1c1a;
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
-      }
-      .actions {
-        margin-top: 16px;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .chip {
-        display: inline-block;
-        font-size: 12px;
-        padding: 4px 10px;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        background: #fff;
-        cursor: pointer;
-        margin: 4px 6px 0 0;
-      }
-      .chip:hover {
-        background: #eae8e2;
-      }
-
-      .status-line {
-        font-size: 13px;
-        color: #6b6a66;
-        margin-top: 10px;
-        min-height: 18px;
-      }
-
-      mark {
-        background: #ffe3a1;
-        padding: 0 2px;
-      }
-      mark.dash {
-        background: #f0c2c2;
-      }
-
-      .flag-summary {
-        font-size: 13px;
-        margin-bottom: 10px;
-        color: #6b6a66;
-      }
-      .article-view {
-        white-space: pre-wrap;
-        line-height: 1.6;
-        font-size: 15px;
-        border: 1px solid #eee;
-        border-radius: 4px;
-        padding: 14px;
-        background: #fafaf8;
-        max-height: 500px;
-        overflow-y: auto;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="wrap">
@@ -258,69 +22,74 @@
           </button>
         </div>
 
-    <div class="sidebar">
-      <h3>Case files</h3>
-      <div id="draft-list"></div>
-      <button class="new-btn secondary" onclick="newDraft()">+ New draft</button>
-    </div>
+        <div class="main">
+          <div class="steps">
+            <div class="step-tab" id="tab-1" onclick="goStep(1)">
+              1. Outline
+            </div>
+            <div class="step-tab" id="tab-2" onclick="goStep(2)">
+              2. Editorial angle
+            </div>
+            <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
+            <div class="step-tab" id="tab-4" onclick="goStep(4)">
+              4. Clean and ship
+            </div>
+          </div>
 
-    <div class="main">
-      <div class="steps">
-        <div class="step-tab" id="tab-1" onclick="goStep(1)">
-          1. Outline
-        </div>
-        <div class="step-tab" id="tab-2" onclick="goStep(2)">
-          2. Editorial angle
-        </div>
-        <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
-        <div class="step-tab" id="tab-4" onclick="goStep(4)">
-          4. Clean and ship
-        </div>
-      </div>
-
-      <!-- STEP 1 -->
-      <div class="panel step-panel" id="panel-1">
-        <h2>Build the outline</h2>
-        <div class="row">
-          <div>
-            <label>Client type</label>
-            <select id="client-type">
-              <option value="contractor">
-                Contractor / home improvement
-              </option>
-              <option value="realtor">Realtor / real estate agent</option>
-              <option value="technology">Technology / SaaS</option>
-            </select>
-          </div>
-          <div>
-            <label>Content type</label>
-            <select id="content-type" onchange="toggleFormatFields()">
-              <option value="blog">Blog post (their website / SEO)</option>
-              <option value="spotlight">
-                Project or listing spotlight
-              </option>
-              <option value="social">
-                Social media caption set (short, mixed)
-              </option>
-              <option value="instagram">
-                Instagram post set (~300 words each)
-              </option>
-              <option value="newsletter">
-                Newsletter, long form (1500-3000 words)
-              </option>
-            </select>
-          </div>
-        </div>
-          </div>
-        </div>
-      </div>
+          <!-- STEP 1 -->
+          <div class="panel step-panel" id="panel-1">
+            <h2>Build the outline</h2>
+            <div class="row">
+              <div>
+                <label>Client type</label>
+                <select id="client-type">
+                  <option value="contractor">
+                    Contractor / home improvement
+                  </option>
+                  <option value="realtor">Realtor / real estate agent</option>
+                  <option value="technology">Technology / SaaS</option>
+                </select>
+              </div>
+              <div>
+                <label>Content type</label>
+                <select id="content-type" onchange="toggleFormatFields()">
+                  <option value="blog">Blog post (their website / SEO)</option>
+                  <option value="spotlight">
+                    Project or listing spotlight
+                  </option>
+                  <option value="social">
+                    Social media caption set (short, mixed)
+                  </option>
+                  <option value="instagram">
+                    Instagram post set (~300 words each)
+                  </option>
+                  <option value="newsletter">
+                    Newsletter, long form (1500-3000 words)
+                  </option>
+                </select>
+              </div>
+            </div>
+            <label>Topic / working headline</label>
+            <input
+              type="text"
+              id="topic"
+              placeholder="e.g. What a kitchen remodel actually costs in North Jersey this year"
+            />
+            <label>Anything specific to include (optional)</label>
+            <textarea
+              id="topic-notes"
+              class="compact-textarea"
+              placeholder="a recent incident, a standard, a vendor, a stat..."
             ></textarea>
             <div class="actions">
               <button onclick="generateOutline()">Generate outline</button>
             </div>
             <div class="status-line" id="status-1"></div>
-            <label>Outline (editable)</label>
-            <textarea id="outline" style="min-height: 280px"></textarea>
+            <label for="outline">Outline (editable)</label>
+            <textarea
+              id="outline"
+              placeholder="Draft the structure here"
+            ></textarea>
             <div class="actions">
               <button onclick="goStep(2)" id="to-step-2" disabled>
                 Continue to editorial angle
@@ -329,9 +98,9 @@
           </div>
 
           <!-- STEP 2 -->
-          <div class="panel step-panel" id="panel-2" style="display: none">
+          <div class="panel step-panel" id="panel-2">
             <h2>Your editorial angle</h2>
-            <p style="font-size: 13px; color: #6b6a66">
+            <p class="panel-copy">
               This is the personal take that makes it yours. Pick a lens or
               write your own.
             </p>
@@ -347,7 +116,7 @@
             <label>Your hot take / hands-on diagnosis</label>
             <textarea
               id="personal-input"
-              style="min-height: 160px"
+              class="tall-textarea"
               placeholder="What do you actually think here? Where does the framework break down in real teams? What's the frontline reality nobody puts in a vendor datasheet?"
             ></textarea>
             <div class="actions">
@@ -359,9 +128,9 @@
           </div>
 
           <!-- STEP 3 -->
-          <div class="panel step-panel" id="panel-3" style="display: none">
+          <div class="panel step-panel" id="panel-3">
             <h2>Write the article</h2>
-            <div class="row" id="ig-count-wrap" style="display: none">
+            <div class="row" id="ig-count-wrap">
               <div>
                 <label>Number of posts</label>
                 <input type="number" id="ig-count" min="5" max="10" value="7" />
@@ -372,7 +141,7 @@
             </div>
             <div class="status-line" id="status-3"></div>
             <label>Draft (editable, max ~1400 words)</label>
-            <textarea id="draft" style="min-height: 400px"></textarea>
+            <textarea id="draft" class="large-textarea"></textarea>
             <div class="actions">
               <button class="secondary" onclick="goStep(2)">Back</button>
               <button onclick="goStep(4)" id="to-step-4" disabled>
@@ -382,7 +151,7 @@
           </div>
 
           <!-- STEP 4 -->
-          <div class="panel step-panel" id="panel-4" style="display: none">
+          <div class="panel step-panel" id="panel-4">
             <h2>Clean and ship</h2>
             <div class="actions">
               <button onclick="scanDraft()">
@@ -396,7 +165,7 @@
             <div class="article-view" id="scan-view"></div>
 
             <label>Final text (editable)</label>
-            <textarea id="final" style="min-height: 400px"></textarea>
+            <textarea id="final" class="large-textarea"></textarea>
             <div class="actions">
               <button class="secondary" onclick="goStep(3)">Back</button>
               <button onclick="copyFinal()">Copy to clipboard</button>
@@ -482,10 +251,6 @@
         return "d" + Date.now();
       }
 
-      function uid() {
-        return "d" + Date.now();
-      }
-
       function emptyDraft() {
         return {
           id: uid(),
@@ -502,7 +267,7 @@
       }
 
       async function callClaude(prompt, maxTokens) {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
+        const res = await fetch("/api/anthropic", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -512,6 +277,9 @@
           }),
         });
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error?.message || "Backend request failed.");
+        }
         const text = (data.content || [])
           .filter((b) => b.type === "text")
           .map((b) => b.text)
@@ -539,28 +307,6 @@
           step: currentStep,
           updatedAt: new Date().toISOString(),
         };
-      }
-
-      function applyState(s) {
-        currentId = s.id;
-        document.getElementById("client-type").value = s.clientType || "contractor";
-        document.getElementById("content-type").value = s.contentType || "blog";
-        document.getElementById("ig-count").value = s.igCount || 7;
-        toggleFormatFields();
-        document.getElementById("topic").value = s.topic || "";
-        document.getElementById("topic-notes").value = s.topicNotes || "";
-        document.getElementById("outline").value = s.outline || "";
-        document.getElementById("personal-input").value = s.personalInput || "";
-        document.getElementById("draft").value = s.draft || "";
-        document.getElementById("final").value = s.final || "";
-        document.getElementById("to-step-2").disabled = !s.outline;
-        document.getElementById("to-step-4").disabled = !s.draft;
-        document.getElementById("scan-view").textContent = "";
-        document.getElementById("flag-summary").textContent = "";
-        document.getElementById("polish-btn").disabled = true;
-        goStep(s.step || 1, true);
-        document.getElementById("doc-status").textContent =
-          (s.topic || "untitled") + " — " + (s.status || "draft");
       }
 
       function applyState(s) {
@@ -625,8 +371,7 @@
           index = [];
         }
         if (index.length === 0) {
-          listEl.innerHTML =
-            '<div style="font-size:12px;color:#999">none yet</div>';
+          listEl.innerHTML = '<div class="draft-empty">none yet</div>';
           return;
         }
         index.forEach((item) => {
@@ -769,7 +514,7 @@
               ? "a project or listing spotlight piece"
               : "a set of social media captions";
         const prompt = `Act as a content marketer writing on behalf of ${meta.label}. Create a detailed outline for ${contentLabel} on: "${topic}".
-${notes ? "Additional context to incorporate: " + notes : ""}`
+${notes ? "Additional context to incorporate: " + notes : ""}
 
 Structure the outline in exactly these 5 stages:
 1. The Relatable Hook: a real pain point, worry, or question the reader (${meta.audience}) already has.
@@ -932,5 +677,6 @@ ${draft}`;
         applyState(emptyDraft());
       })();
     </script>
+    <script src="script.js"></script>
   </body>
 </html>
