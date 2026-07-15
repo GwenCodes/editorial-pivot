@@ -1,498 +1,807 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Local Content Pivot</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: #f6f5f2;
-    color: #1c1c1a;
-    margin: 0;
-    padding: 0;
-  }
-  .wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 24px 20px 80px;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 2px solid #1c1c1a;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-  }
-  header h1 { font-size: 20px; margin: 0; letter-spacing: 0.5px; }
-  header span { font-size: 13px; color: #6b6a66; }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Editorial Pivot</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        background: #f6f5f2;
+        color: #1c1c1a;
+        margin: 0;
+        padding: 0;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 2px solid #1c1c1a;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+      }
+      header h1 {
+        font-size: 20px;
+        margin: 0;
+        letter-spacing: 0.5px;
+      }
+      header span {
+        font-size: 13px;
+        color: #6b6a66;
+      }
 
-  .layout { display: flex; gap: 24px; align-items: flex-start; }
-  .sidebar {
-    width: 210px;
-    flex-shrink: 0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #fff;
-    padding: 12px;
-  }
-  .sidebar h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6a66; margin: 0 0 8px; }
-  .draft-row {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-  }
-  .draft-item {
-    display: block;
-    flex: 1;
-    text-align: left;
-    background: none;
-    border: none;
-    padding: 8px 4px;
-    font-size: 13px;
-    cursor: pointer;
-    color: #1c1c1a;
-  }
-  .draft-item:hover { background: #f6f5f2; }
-  .draft-item .status { font-size: 11px; color: #a8631f; display: block; }
-  .delete-btn {
-    background: none;
-    border: none;
-    color: #a83232;
-    font-size: 15px;
-    padding: 4px 6px;
-    cursor: pointer;
-  }
-  .delete-btn:hover { color: #6e1d1d; }
-  .new-btn { margin-top: 10px; width: 100%; }
+      .layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .sidebar {
+        width: 210px;
+        flex-shrink: 0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #fff;
+        padding: 12px;
+      }
+      .sidebar h3 {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6b6a66;
+        margin: 0 0 8px;
+      }
+      .draft-row {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+      }
+      .draft-item {
+        display: block;
+        flex: 1;
+        text-align: left;
+        background: none;
+        border: none;
+        padding: 8px 4px;
+        font-size: 13px;
+        cursor: pointer;
+        color: #1c1c1a;
+      }
+      .draft-item:hover {
+        background: #f6f5f2;
+      }
+      .draft-item .status {
+        font-size: 11px;
+        color: #a8631f;
+        display: block;
+      }
+      .delete-btn {
+        background: none;
+        border: none;
+        color: #a83232;
+        font-size: 15px;
+        padding: 4px 6px;
+        cursor: pointer;
+      }
+      .delete-btn:hover {
+        color: #6e1d1d;
+      }
+      .new-btn {
+        margin-top: 10px;
+        width: 100%;
+      }
 
-  .main { flex: 1; min-width: 0; }
+      .main {
+        flex: 1;
+        min-width: 0;
+      }
 
-  .steps {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-  .step-tab {
-    flex: 1;
-    text-align: center;
-    padding: 8px 4px;
-    font-size: 12px;
-    border-radius: 4px;
-    background: #eae8e2;
-    color: #6b6a66;
-    border: 1px solid transparent;
-  }
-  .step-tab.active { background: #1c1c1a; color: #fff; }
-  .step-tab.done { background: #dbe7de; color: #2c5c3f; }
+      .steps {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 20px;
+      }
+      .step-tab {
+        flex: 1;
+        text-align: center;
+        padding: 8px 4px;
+        font-size: 12px;
+        border-radius: 4px;
+        background: #eae8e2;
+        color: #6b6a66;
+        border: 1px solid transparent;
+      }
+      .step-tab.active {
+        background: #1c1c1a;
+        color: #fff;
+      }
+      .step-tab.done {
+        background: #dbe7de;
+        color: #2c5c3f;
+      }
 
-  .panel {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 20px;
-  }
-  .panel h2 { margin-top: 0; font-size: 16px; }
-  label { font-size: 13px; font-weight: 600; display: block; margin: 14px 0 4px; }
-  input[type=text], textarea, select {
-    width: 100%;
-    font-family: inherit;
-    font-size: 14px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-  }
-  textarea { min-height: 160px; line-height: 1.5; }
-  .row { display: flex; gap: 10px; }
-  .row > * { flex: 1; }
+      .panel {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 20px;
+      }
+      .panel h2 {
+        margin-top: 0;
+        font-size: 16px;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        display: block;
+        margin: 14px 0 4px;
+      }
+      input[type="text"],
+      textarea,
+      select {
+        width: 100%;
+        font-family: inherit;
+        font-size: 14px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+      }
+      textarea {
+        min-height: 160px;
+        line-height: 1.5;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row > * {
+        flex: 1;
+      }
 
-  button {
-    font-family: inherit;
-    font-size: 13px;
-    padding: 8px 14px;
-    border-radius: 4px;
-    border: 1px solid #1c1c1a;
-    background: #1c1c1a;
-    color: #fff;
-    cursor: pointer;
-  }
-  button.secondary { background: #fff; color: #1c1c1a; }
-  button:disabled { opacity: 0.5; cursor: default; }
-  .actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+      button {
+        font-family: inherit;
+        font-size: 13px;
+        padding: 8px 14px;
+        border-radius: 4px;
+        border: 1px solid #1c1c1a;
+        background: #1c1c1a;
+        color: #fff;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #fff;
+        color: #1c1c1a;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
 
-  .chip {
-    display: inline-block;
-    font-size: 12px;
-    padding: 4px 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    background: #fff;
-    cursor: pointer;
-    margin: 4px 6px 0 0;
-  }
-  .chip:hover { background: #eae8e2; }
+      .chip {
+        display: inline-block;
+        font-size: 12px;
+        padding: 4px 10px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        background: #fff;
+        cursor: pointer;
+        margin: 4px 6px 0 0;
+      }
+      .chip:hover {
+        background: #eae8e2;
+      }
 
-  .status-line { font-size: 13px; color: #6b6a66; margin-top: 10px; min-height: 18px; }
+      .status-line {
+        font-size: 13px;
+        color: #6b6a66;
+        margin-top: 10px;
+        min-height: 18px;
+      }
 
-  mark { background: #ffe3a1; padding: 0 2px; }
-  mark.dash { background: #f0c2c2; }
+      mark {
+        background: #ffe3a1;
+        padding: 0 2px;
+      }
+      mark.dash {
+        background: #f0c2c2;
+      }
 
-  .flag-summary { font-size: 13px; margin-bottom: 10px; color: #6b6a66; }
-  .article-view {
-    white-space: pre-wrap;
-    line-height: 1.6;
-    font-size: 15px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    padding: 14px;
-    background: #fafaf8;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
+      .flag-summary {
+        font-size: 13px;
+        margin-bottom: 10px;
+        color: #6b6a66;
+      }
+      .article-view {
+        white-space: pre-wrap;
+        line-height: 1.6;
+        font-size: 15px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 14px;
+        background: #fafaf8;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Editorial Pivot</h1>
+        <span id="doc-status">no draft loaded</span>
+      </header>
 
-  <header>
-    <h1>Local Content Pivot</h1>
-    <span id="doc-status">no draft loaded</span>
-  </header>
+      <div class="layout">
+        <div class="sidebar">
+          <h3>Case files</h3>
+          <div id="draft-list"></div>
+          <button class="new-btn secondary" onclick="newDraft()">
+            + New draft
+          </button>
+        </div>
 
-  <div class="layout">
-    <div class="sidebar">
-      <h3>Case files</h3>
-      <div id="draft-list"></div>
-      <button class="new-btn secondary" onclick="newDraft()">+ New draft</button>
+        <div class="main">
+          <div class="steps">
+            <div class="step-tab" id="tab-1" onclick="goStep(1)">
+              1. Outline
+            </div>
+            <div class="step-tab" id="tab-2" onclick="goStep(2)">
+              2. Editorial angle
+            </div>
+            <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
+            <div class="step-tab" id="tab-4" onclick="goStep(4)">
+              4. Clean and ship
+            </div>
+          </div>
+
+          <!-- STEP 1 -->
+          <div class="panel step-panel" id="panel-1">
+            <h2>Build the outline</h2>
+            <div class="row">
+              <div>
+                <label>Client type</label>
+                <select id="client-type">
+                  <option value="contractor">
+                    Contractor / home improvement
+                  </option>
+                  <option value="realtor">Realtor / real estate agent</option>
+                  <option value="technology">Technology / SaaS</option>
+                </select>
+              </div>
+              <div>
+                <label>Content type</label>
+                <select id="content-type" onchange="toggleFormatFields()">
+                  <option value="blog">Blog post (their website / SEO)</option>
+                  <option value="spotlight">
+                    Project or listing spotlight
+                  </option>
+                  <option value="social">
+                    Social media caption set (short, mixed)
+                  </option>
+                  <option value="instagram">
+                    Instagram post set (~300 words each)
+                  </option>
+                  <option value="newsletter">
+                    Newsletter, long form (1500-3000 words)
+                  </option>
+                </select>
+              </div>
+            </div>
+            <label>Topic / working headline</label>
+            <input
+              type="text"
+              id="topic"
+              placeholder="e.g. What a kitchen remodel actually costs in North Jersey this year"
+            />
+            <label>Anything specific to include (optional)</label>
+            <textarea
+              id="topic-notes"
+              style="min-height: 70px"
+              placeholder="a recent incident, a standard, a vendor, a stat..."
+            ></textarea>
+            <div class="actions">
+              <button onclick="generateOutline()">Generate outline</button>
+            </div>
+            <div class="status-line" id="status-1"></div>
+            <label>Outline (editable)</label>
+            <textarea id="outline" style="min-height: 280px"></textarea>
+            <div class="actions">
+              <button onclick="goStep(2)" id="to-step-2" disabled>
+                Continue to editorial angle
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="panel step-panel" id="panel-2" style="display: none">
+            <h2>Your editorial angle</h2>
+            <p style="font-size: 13px; color: #6b6a66">
+              This is the personal take that makes it yours. Pick a lens or
+              write your own.
+            </p>
+            <div id="chip-row">
+              <span class="chip" data-kind="behind">Honest cost breakdown</span>
+              <span class="chip" data-kind="legacy"
+                >Behind the scenes reality</span
+              >
+              <span class="chip" data-kind="blindspot"
+                >What they don't ask but should</span
+              >
+            </div>
+            <label>Your hot take / hands-on diagnosis</label>
+            <textarea
+              id="personal-input"
+              style="min-height: 160px"
+              placeholder="What do you actually think here? Where does the framework break down in real teams? What's the frontline reality nobody puts in a vendor datasheet?"
+            ></textarea>
+            <div class="actions">
+              <button class="secondary" onclick="goStep(1)">Back</button>
+              <button onclick="goStep(3)" id="to-step-3">
+                Continue to draft
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="panel step-panel" id="panel-3" style="display: none">
+            <h2>Write the article</h2>
+            <div class="row" id="ig-count-wrap" style="display: none">
+              <div>
+                <label>Number of posts</label>
+                <input type="number" id="ig-count" min="5" max="10" value="7" />
+              </div>
+            </div>
+            <div class="actions">
+              <button onclick="generateDraft()">Generate draft</button>
+            </div>
+            <div class="status-line" id="status-3"></div>
+            <label>Draft (editable, max ~1400 words)</label>
+            <textarea id="draft" style="min-height: 400px"></textarea>
+            <div class="actions">
+              <button class="secondary" onclick="goStep(2)">Back</button>
+              <button onclick="goStep(4)" id="to-step-4" disabled>
+                Continue to cleanup
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="panel step-panel" id="panel-4" style="display: none">
+            <h2>Clean and ship</h2>
+            <div class="actions">
+              <button onclick="scanDraft()">
+                Scan for AI-isms and em dashes
+              </button>
+              <button onclick="polishDraft()" id="polish-btn" disabled>
+                Run AI polish pass
+              </button>
+            </div>
+            <div class="flag-summary" id="flag-summary"></div>
+            <div class="article-view" id="scan-view"></div>
+
+            <label>Final text (editable)</label>
+            <textarea id="final" style="min-height: 400px"></textarea>
+            <div class="actions">
+              <button class="secondary" onclick="goStep(3)">Back</button>
+              <button onclick="copyFinal()">Copy to clipboard</button>
+              <button onclick="saveFinal()">Mark cleared and save</button>
+            </div>
+            <div class="status-line" id="status-4"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="main">
-      <div class="steps">
-        <div class="step-tab" id="tab-1" onclick="goStep(1)">1. Outline</div>
-        <div class="step-tab" id="tab-2" onclick="goStep(2)">2. Editorial angle</div>
-        <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
-        <div class="step-tab" id="tab-4" onclick="goStep(4)">4. Clean and ship</div>
-      </div>
+    <script>
+      let currentId = null;
+      let currentStep = 1;
 
-      <!-- STEP 1 -->
-      <div class="panel step-panel" id="panel-1">
-        <h2>Build the outline</h2>
-        <div class="row">
-          <div>
-            <label>Client type</label>
-            <select id="client-type">
-              <option value="contractor">Contractor / home improvement</option>
-              <option value="realtor">Realtor / real estate agent</option>
-            </select>
-          </div>
-          <div>
-            <label>Content type</label>
-            <select id="content-type">
-              <option value="blog">Blog post (their website / SEO)</option>
-              <option value="spotlight">Project or listing spotlight</option>
-              <option value="social">Social media caption set</option>
-            </select>
-          </div>
-        </div>
-        <label>Topic / working headline</label>
-        <input type="text" id="topic" placeholder="e.g. What a kitchen remodel actually costs in North Jersey this year">
-        <label>Anything specific to include (optional)</label>
-        <textarea id="topic-notes" style="min-height:70px" placeholder="a recent incident, a standard, a vendor, a stat..."></textarea>
-        <div class="actions">
-          <button onclick="generateOutline()">Generate outline</button>
-        </div>
-        <div class="status-line" id="status-1"></div>
-        <label>Outline (editable)</label>
-        <textarea id="outline" style="min-height:280px"></textarea>
-        <div class="actions">
-          <button onclick="goStep(2)" id="to-step-2" disabled>Continue to editorial angle</button>
-        </div>
-      </div>
+      const BANNED_PHRASES = [
+        "in today's ever-evolving",
+        "in the ever-evolving",
+        "in today's digital landscape",
+        "in an increasingly",
+        "it's important to note",
+        "it is important to note",
+        "in conclusion",
+        "furthermore",
+        "moreover",
+        "delve into",
+        "navigate the complexities",
+        "navigate the complexity",
+        "game-changer",
+        "game changer",
+        "unlock the potential",
+        "unlock the power",
+        "boasts",
+        "seamless",
+        "seamlessly",
+        "robust solution",
+        "testament to",
+        "tapestry",
+        "landscape of",
+        "at the end of the day",
+        "in the world of",
+        "when it comes to",
+        "it is worth noting",
+        "as a result of this",
+        "in this day and age",
+        "paradigm shift",
+        "cutting-edge solution",
+        "revolutionize",
+        "revolutionizing",
+        "leverage the power",
+        "holistic approach",
+        "dive deep",
+        "unpack this",
+        "let's break it down",
+        "the bottom line is",
+        "in summary",
+        "not only... but also",
+      ];
 
-      <!-- STEP 2 -->
-      <div class="panel step-panel" id="panel-2" style="display:none">
-        <h2>Your editorial angle</h2>
-        <p style="font-size:13px;color:#6b6a66">This is the personal take that makes it yours. Pick a lens or write your own.</p>
-        <div>
-          <span class="chip" onclick="insertChip('behind')">Honest cost breakdown</span>
-          <span class="chip" onclick="insertChip('legacy')">Behind the scenes reality</span>
-          <span class="chip" onclick="insertChip('blindspot')">What they don't ask but should</span>
-        </div>
-        <label>Your hot take / hands-on diagnosis</label>
-        <textarea id="personal-input" style="min-height:160px" placeholder="What do you actually think here? Where does the framework break down in real teams? What's the frontline reality nobody puts in a vendor datasheet?"></textarea>
-        <div class="actions">
-          <button class="secondary" onclick="goStep(1)">Back</button>
-          <button onclick="goStep(3)" id="to-step-3">Continue to draft</button>
-        </div>
-      </div>
+      // Chip suggestions for the personal-angle step, tailored per client type
+      const CHIP_TEXT = {
+        contractor: {
+          behind: "Here's what most quotes leave out: ",
+          legacy: "What actually happens on site that clients never see: ",
+          blindspot: "The question I wish more clients asked before hiring: ",
+        },
+        realtor: {
+          behind: "Here's what most listing sheets leave out: ",
+          legacy:
+            "What actually happens behind the scenes of this deal that clients never see: ",
+          blindspot:
+            "The question I wish more buyers/sellers asked before signing: ",
+        },
+        technology: {
+          behind: "Here's what most vendor datasheets leave out: ",
+          legacy:
+            "What actually happens under the hood, or on the support side, that customers never see: ",
+          blindspot: "The question I wish more prospects asked before buying: ",
+        },
+      };
 
-      <!-- STEP 3 -->
-      <div class="panel step-panel" id="panel-3" style="display:none">
-        <h2>Write the article</h2>
-        <div class="actions">
-          <button onclick="generateDraft()">Generate draft</button>
-        </div>
-        <div class="status-line" id="status-3"></div>
-        <label>Draft (editable, max ~1400 words)</label>
-        <textarea id="draft" style="min-height:400px"></textarea>
-        <div class="actions">
-          <button class="secondary" onclick="goStep(2)">Back</button>
-          <button onclick="goStep(4)" id="to-step-4" disabled>Continue to cleanup</button>
-        </div>
-      </div>
+      function uid() {
+        return "d" + Date.now();
+      }
 
-      <!-- STEP 4 -->
-      <div class="panel step-panel" id="panel-4" style="display:none">
-        <h2>Clean and ship</h2>
-        <div class="actions">
-          <button onclick="scanDraft()">Scan for AI-isms and em dashes</button>
-          <button onclick="polishDraft()" id="polish-btn" disabled>Run AI polish pass</button>
-        </div>
-        <div class="flag-summary" id="flag-summary"></div>
-        <div class="article-view" id="scan-view"></div>
+      function emptyDraft() {
+        return {
+          id: uid(),
+          topic: "",
+          topicNotes: "",
+          outline: "",
+          personalInput: "",
+          draft: "",
+          final: "",
+          step: 1,
+          status: "outline",
+          updatedAt: new Date().toISOString(),
+        };
+      }
 
-        <label>Final text (editable)</label>
-        <textarea id="final" style="min-height:400px"></textarea>
-        <div class="actions">
-          <button class="secondary" onclick="goStep(3)">Back</button>
-          <button onclick="copyFinal()">Copy to clipboard</button>
-          <button onclick="saveFinal()">Mark cleared and save</button>
-        </div>
-        <div class="status-line" id="status-4"></div>
-      </div>
+      async function callClaude(prompt, maxTokens) {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: maxTokens || 2000,
+            messages: [{ role: "user", content: prompt }],
+          }),
+        });
+        const data = await res.json();
+        const text = (data.content || [])
+          .filter((b) => b.type === "text")
+          .map((b) => b.text)
+          .join("\n");
+        return text.trim();
+      }
 
-    </div>
-  </div>
-</div>
+      function setStatus(id, msg) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg;
+      }
 
-<script>
-let currentId = null;
-let currentStep = 1;
+      function getState() {
+        return {
+          id: currentId,
+          clientType: document.getElementById("client-type").value,
+          contentType: document.getElementById("content-type").value,
+          topic: document.getElementById("topic").value,
+          topicNotes: document.getElementById("topic-notes").value,
+          outline: document.getElementById("outline").value,
+          personalInput: document.getElementById("personal-input").value,
+          igCount: document.getElementById("ig-count").value,
+          draft: document.getElementById("draft").value,
+          final: document.getElementById("final").value,
+          step: currentStep,
+          updatedAt: new Date().toISOString(),
+        };
+      }
 
-const BANNED_PHRASES = [
-  "in today's ever-evolving", "in the ever-evolving", "in today's digital landscape",
-  "in an increasingly", "it's important to note", "it is important to note",
-  "in conclusion", "furthermore", "moreover", "delve into", "navigate the complexities",
-  "navigate the complexity", "game-changer", "game changer", "unlock the potential",
-  "unlock the power", "boasts", "seamless", "seamlessly", "robust solution",
-  "testament to", "tapestry", "landscape of", "at the end of the day",
-  "in the world of", "when it comes to", "it is worth noting", "as a result of this",
-  "in this day and age", "paradigm shift", "cutting-edge solution", "revolutionize",
-  "revolutionizing", "leverage the power", "holistic approach", "dive deep",
-  "unpack this", "let's break it down", "the bottom line is", "in summary",
-  "not only... but also"
-];
+      function applyState(s) {
+        currentId = s.id;
+        document.getElementById("client-type").value =
+          s.clientType || "contractor";
+        document.getElementById("content-type").value = s.contentType || "blog";
+        document.getElementById("ig-count").value = s.igCount || 7;
+        toggleFormatFields();
+        document.getElementById("topic").value = s.topic || "";
+        document.getElementById("topic-notes").value = s.topicNotes || "";
+        document.getElementById("outline").value = s.outline || "";
+        document.getElementById("personal-input").value = s.personalInput || "";
+        document.getElementById("draft").value = s.draft || "";
+        document.getElementById("final").value = s.final || "";
+        document.getElementById("to-step-2").disabled = !s.outline;
+        document.getElementById("to-step-4").disabled = !s.draft;
+        document.getElementById("scan-view").textContent = "";
+        document.getElementById("flag-summary").textContent = "";
+        document.getElementById("polish-btn").disabled = true;
+        goStep(s.step || 1, true);
+        document.getElementById("doc-status").textContent =
+          (s.topic || "untitled") + " — " + (s.status || "draft");
+      }
 
-function uid() { return 'd' + Date.now(); }
+      async function saveCurrent(statusLabel) {
+        const s = getState();
+        if (statusLabel) s.status = statusLabel;
+        try {
+          await window.storage.set("draft:" + s.id, JSON.stringify(s));
+          let index = [];
+          try {
+            const r = await window.storage.get("draft-index");
+            index = JSON.parse(r.value);
+          } catch (e) {
+            index = [];
+          }
+          index = index.filter((x) => x.id !== s.id);
+          index.unshift({
+            id: s.id,
+            topic: s.topic || "untitled",
+            status: s.status || "draft",
+            updatedAt: s.updatedAt,
+          });
+          await window.storage.set("draft-index", JSON.stringify(index));
+          await loadIndex();
+          document.getElementById("doc-status").textContent =
+            (s.topic || "untitled") + " — " + s.status;
+        } catch (e) {
+          console.error("save failed", e);
+        }
+      }
 
-function emptyDraft() {
-  return {
-    id: uid(),
-    topic: '', topicNotes: '', outline: '',
-    personalInput: '', draft: '', final: '',
-    step: 1, status: 'outline', updatedAt: new Date().toISOString()
-  };
-}
+      async function loadIndex() {
+        const listEl = document.getElementById("draft-list");
+        listEl.innerHTML = "";
+        let index = [];
+        try {
+          const r = await window.storage.get("draft-index");
+          index = JSON.parse(r.value);
+        } catch (e) {
+          index = [];
+        }
+        if (index.length === 0) {
+          listEl.innerHTML =
+            '<div style="font-size:12px;color:#999">none yet</div>';
+          return;
+        }
+        index.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "draft-row";
 
-async function callClaude(prompt, maxTokens) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: maxTokens || 2000,
-      messages: [{ role: "user", content: prompt }]
-    })
-  });
-  const data = await res.json();
-  const text = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-  return text.trim();
-}
+          const btn = document.createElement("button");
+          btn.className = "draft-item";
+          btn.innerHTML =
+            (item.topic || "untitled") +
+            '<span class="status">' +
+            item.status +
+            "</span>";
+          btn.onclick = () => openDraft(item.id);
 
-function setStatus(id, msg) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = msg;
-}
+          const del = document.createElement("button");
+          del.className = "delete-btn";
+          del.title = "Delete this case file";
+          del.textContent = "\u00d7";
+          del.onclick = (e) => {
+            e.stopPropagation();
+            deleteDraft(item.id);
+          };
 
-function getState() {
-  return {
-    id: currentId,
-    clientType: document.getElementById('client-type').value,
-    contentType: document.getElementById('content-type').value,
-    topic: document.getElementById('topic').value,
-    topicNotes: document.getElementById('topic-notes').value,
-    outline: document.getElementById('outline').value,
-    personalInput: document.getElementById('personal-input').value,
-    draft: document.getElementById('draft').value,
-    final: document.getElementById('final').value,
-    step: currentStep,
-    updatedAt: new Date().toISOString()
-  };
-}
+          row.appendChild(btn);
+          row.appendChild(del);
+          listEl.appendChild(row);
+        });
+      }
 
-function applyState(s) {
-  currentId = s.id;
-  document.getElementById('client-type').value = s.clientType || 'contractor';
-  document.getElementById('content-type').value = s.contentType || 'blog';
-  document.getElementById('topic').value = s.topic || '';
-  document.getElementById('topic-notes').value = s.topicNotes || '';
-  document.getElementById('outline').value = s.outline || '';
-  document.getElementById('personal-input').value = s.personalInput || '';
-  document.getElementById('draft').value = s.draft || '';
-  document.getElementById('final').value = s.final || '';
-  document.getElementById('to-step-2').disabled = !s.outline;
-  document.getElementById('to-step-4').disabled = !s.draft;
-  document.getElementById('scan-view').textContent = '';
-  document.getElementById('flag-summary').textContent = '';
-  document.getElementById('polish-btn').disabled = true;
-  goStep(s.step || 1, true);
-  document.getElementById('doc-status').textContent = (s.topic || 'untitled') + ' — ' + (s.status || 'draft');
-}
+      async function openDraft(id) {
+        try {
+          const r = await window.storage.get("draft:" + id);
+          applyState(JSON.parse(r.value));
+        } catch (e) {
+          console.error("load failed", e);
+        }
+      }
 
-async function saveCurrent(statusLabel) {
-  const s = getState();
-  if (statusLabel) s.status = statusLabel;
-  try {
-    await window.storage.set('draft:' + s.id, JSON.stringify(s));
-    let index = [];
-    try {
-      const r = await window.storage.get('draft-index');
-      index = JSON.parse(r.value);
-    } catch (e) { index = []; }
-    index = index.filter(x => x.id !== s.id);
-    index.unshift({ id: s.id, topic: s.topic || 'untitled', status: s.status || 'draft', updatedAt: s.updatedAt });
-    await window.storage.set('draft-index', JSON.stringify(index));
-    await loadIndex();
-    document.getElementById('doc-status').textContent = (s.topic || 'untitled') + ' — ' + s.status;
-  } catch (e) { console.error('save failed', e); }
-}
+      async function deleteDraft(id) {
+        if (!confirm("Delete this case file? This cannot be undone.")) return;
+        try {
+          await window.storage.delete("draft:" + id);
+        } catch (e) {
+          /* already gone, ignore */
+        }
+        try {
+          const r = await window.storage.get("draft-index");
+          let index = JSON.parse(r.value);
+          index = index.filter((x) => x.id !== id);
+          await window.storage.set("draft-index", JSON.stringify(index));
+        } catch (e) {
+          console.error("index update failed", e);
+        }
+        await loadIndex();
+        if (currentId === id) newDraft();
+      }
 
-async function loadIndex() {
-  const listEl = document.getElementById('draft-list');
-  listEl.innerHTML = '';
-  let index = [];
-  try {
-    const r = await window.storage.get('draft-index');
-    index = JSON.parse(r.value);
-  } catch (e) { index = []; }
-  if (index.length === 0) {
-    listEl.innerHTML = '<div style="font-size:12px;color:#999">none yet</div>';
-    return;
-  }
-  index.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'draft-row';
+      function newDraft() {
+        applyState(emptyDraft());
+      }
 
-    const btn = document.createElement('button');
-    btn.className = 'draft-item';
-    btn.innerHTML = (item.topic || 'untitled') + '<span class="status">' + item.status + '</span>';
-    btn.onclick = () => openDraft(item.id);
+      function goStep(n, skipSave) {
+        if (!skipSave) saveCurrent();
+        currentStep = n;
+        for (let i = 1; i <= 4; i++) {
+          document.getElementById("panel-" + i).style.display =
+            i === n ? "block" : "none";
+          const tab = document.getElementById("tab-" + i);
+          tab.classList.remove("active", "done");
+          if (i === n) tab.classList.add("active");
+          else if (i < n) tab.classList.add("done");
+        }
+        if (n === 2) renderChips();
+      }
 
-    const del = document.createElement('button');
-    del.className = 'delete-btn';
-    del.title = 'Delete this case file';
-    del.textContent = '\u00d7';
-    del.onclick = (e) => { e.stopPropagation(); deleteDraft(item.id); };
+      function renderChips() {
+        const clientType = document.getElementById("client-type").value;
+        const chipMap = CHIP_TEXT[clientType] || CHIP_TEXT.contractor;
+        const row = document.getElementById("chip-row");
+        row.innerHTML = "";
+        const labels = {
+          behind:
+            clientType === "technology"
+              ? "Honest limitations breakdown"
+              : "Honest cost breakdown",
+          legacy: "Behind the scenes reality",
+          blindspot: "What they don't ask but should",
+        };
+        Object.keys(chipMap).forEach((kind) => {
+          const span = document.createElement("span");
+          span.className = "chip";
+          span.textContent = labels[kind];
+          span.onclick = () => insertChip(kind);
+          row.appendChild(span);
+        });
+      }
 
-    row.appendChild(btn);
-    row.appendChild(del);
-    listEl.appendChild(row);
-  });
-}
+      function insertChip(kind) {
+        const clientType = document.getElementById("client-type").value;
+        const chipMap = CHIP_TEXT[clientType] || CHIP_TEXT.contractor;
+        const ta = document.getElementById("personal-input");
+        ta.value = (ta.value ? ta.value + "\n\n" : "") + chipMap[kind];
+        ta.focus();
+      }
 
-async function openDraft(id) {
-  try {
-    const r = await window.storage.get('draft:' + id);
-    applyState(JSON.parse(r.value));
-  } catch (e) { console.error('load failed', e); }
-}
+      function clientMeta(type) {
+        if (type === "realtor")
+          return {
+            label: "a realtor / real estate agent",
+            audience: "home buyers or sellers",
+          };
+        if (type === "technology")
+          return {
+            label: "a technology / SaaS company",
+            audience:
+              "prospective business customers, who may or may not be technical",
+          };
+        return {
+          label: "a contractor / home improvement business",
+          audience: "homeowners",
+        };
+      }
 
-async function deleteDraft(id) {
-  if (!confirm('Delete this case file? This cannot be undone.')) return;
-  try {
-    await window.storage.delete('draft:' + id);
-  } catch (e) { /* already gone, ignore */ }
-  try {
-    const r = await window.storage.get('draft-index');
-    let index = JSON.parse(r.value);
-    index = index.filter(x => x.id !== id);
-    await window.storage.set('draft-index', JSON.stringify(index));
-  } catch (e) { console.error('index update failed', e); }
-  await loadIndex();
-  if (currentId === id) newDraft();
-}
-
-function newDraft() {
-  applyState(emptyDraft());
-}
-
-function goStep(n, skipSave) {
-  if (!skipSave) saveCurrent();
-  currentStep = n;
-  for (let i = 1; i <= 4; i++) {
-    document.getElementById('panel-' + i).style.display = (i === n) ? 'block' : 'none';
-    const tab = document.getElementById('tab-' + i);
-    tab.classList.remove('active', 'done');
-    if (i === n) tab.classList.add('active');
-    else if (i < n) tab.classList.add('done');
-  }
-}
-
-function insertChip(kind) {
-  const map = {
-    behind: "Here's what most quotes leave out: ",
-    legacy: "What actually happens on site that clients never see: ",
-    blindspot: "The question I wish more clients asked before hiring: "
-  };
-  const ta = document.getElementById('personal-input');
-  ta.value = (ta.value ? ta.value + '\n\n' : '') + map[kind];
-  ta.focus();
-}
-
-async function generateOutline() {
-  const topic = document.getElementById('topic').value.trim();
-  if (!topic) { setStatus('status-1', 'Enter a topic first.'); return; }
-  setStatus('status-1', 'Generating outline...');
-  const notes = document.getElementById('topic-notes').value.trim();
-  const clientType = document.getElementById('client-type').value;
-  const contentType = document.getElementById('content-type').value;
-  const clientLabel = clientType === 'realtor' ? 'a realtor / real estate agent' : 'a contractor / home improvement business';
-  const contentLabel = contentType === 'blog' ? 'a blog post for their website' : contentType === 'spotlight' ? 'a project or listing spotlight piece' : 'a set of social media captions';
-  const prompt = `Act as a content marketer writing on behalf of ${clientLabel}. Create a detailed outline for ${contentLabel} on: "${topic}".
-${notes ? 'Additional context to incorporate: ' + notes : ''}
+      async function generateOutline() {
+        const topic = document.getElementById("topic").value.trim();
+        if (!topic) {
+          setStatus("status-1", "Enter a topic first.");
+          return;
+        }
+        setStatus("status-1", "Generating outline...");
+        const notes = document.getElementById("topic-notes").value.trim();
+        const clientType = document.getElementById("client-type").value;
+        const contentType = document.getElementById("content-type").value;
+        const meta = clientMeta(clientType);
+        const contentLabel =
+          contentType === "blog"
+            ? "a blog post for their website"
+            : contentType === "spotlight"
+              ? "a project or listing spotlight piece"
+              : "a set of social media captions";
+        const prompt = `Act as a content marketer writing on behalf of ${meta.label}. Create a detailed outline for ${contentLabel} on: "${topic}".
+${notes ? "Additional context to incorporate: " + notes : ""}
 
 Structure the outline in exactly these 5 stages:
-1. The Relatable Hook: a real pain point, worry, or question the reader (a homeowner or a buyer/seller) already has.
-2. The Credibility Proof: specifics that show real expertise (materials, process, standards, numbers, before/after detail) without sounding like a brag sheet.
+1. The Relatable Hook: a real pain point, worry, or question the reader (${meta.audience}) already has.
+2. The Credibility Proof: specifics that show real expertise (materials, process, standards, numbers, before/after detail, case results) without sounding like a brag sheet.
 3. The Personal Touch (leave this as a placeholder labeled "[WRITER'S PERSONAL TAKE GOES HERE]" - do not write this section, the writer will supply their own story or angle).
 4. The Practical Breakdown: what this actually means for the reader in plain terms (cost, timeline, what to ask for, what to watch out for).
-5. The Call to Action: a natural, non-pushy next step (contact, visit, schedule a walkthrough).
+5. The Call to Action: a natural, non-pushy next step (contact, visit, schedule a walkthrough, book a demo).
 
 Keep it as a scannable bulleted outline, not prose. If the content type is social captions, outline it as a short sequence of caption beats instead of long sections.`;
-  try {
-    const text = await callClaude(prompt, 1500);
-    document.getElementById('outline').value = text;
-    document.getElementById('to-step-2').disabled = false;
-    setStatus('status-1', 'Outline ready. Edit it directly if needed.');
-    saveCurrent('outline drafted');
-  } catch (e) {
-    setStatus('status-1', 'Something went wrong generating the outline.');
-  }
-}
+        try {
+          const text = await callClaude(prompt, 1500);
+          document.getElementById("outline").value = text;
+          document.getElementById("to-step-2").disabled = false;
+          setStatus("status-1", "Outline ready. Edit it directly if needed.");
+          saveCurrent("outline drafted");
+        } catch (e) {
+          setStatus("status-1", "Something went wrong generating the outline.");
+        }
+      }
 
-async function generateDraft() {
-  const outline = document.getElementById('outline').value.trim();
-  const personal = document.getElementById('personal-input').value.trim();
-  if (!outline) { setStatus('status-3', 'Go back and generate an outline first.'); return; }
-  if (!personal) { setStatus('status-3', 'Add your editorial angle in step 2 first.'); return; }
-  setStatus('status-3', 'Writing draft...');
-  const clientType = document.getElementById('client-type').value;
-  const contentType = document.getElementById('content-type').value;
-  const clientLabel = clientType === 'realtor' ? 'a realtor / real estate agent' : 'a contractor / home improvement business';
-  const lengthNote = contentType === 'social' ? 'Write 4-6 short standalone captions (1-3 sentences each), not one long piece.' : 'Write a polished piece of no more than 900 words.';
-  const prompt = `Act as a content writer working on behalf of ${clientLabel}, writing for homeowners or home buyers/sellers who are not industry experts.
+      function toggleFormatFields() {
+        const ct = document.getElementById("content-type").value;
+        document.getElementById("ig-count-wrap").style.display =
+          ct === "instagram" ? "block" : "none";
+      }
+
+      async function generateDraft() {
+        const outline = document.getElementById("outline").value.trim();
+        const personal = document.getElementById("personal-input").value.trim();
+        if (!outline) {
+          setStatus("status-3", "Go back and generate an outline first.");
+          return;
+        }
+        if (!personal) {
+          setStatus("status-3", "Add your editorial angle in step 2 first.");
+          return;
+        }
+        setStatus("status-3", "Writing draft...");
+        const clientType = document.getElementById("client-type").value;
+        const contentType = document.getElementById("content-type").value;
+        const meta = clientMeta(clientType);
+        let lengthNote = "Write a polished piece of no more than 900 words.";
+        let maxTok = 3000;
+        if (contentType === "social") {
+          lengthNote =
+            "Write 4-6 short standalone captions (1-3 sentences each), not one long piece.";
+        } else if (contentType === "instagram") {
+          const count = document.getElementById("ig-count").value || 7;
+          lengthNote = `Write ${count} separate Instagram posts (roughly 300 words each) based on this outline, each covering a distinct angle or stage of it so the set reads as a mini-series. Number each post clearly (Post 1, Post 2, etc.) and end each with a short call to action or question.`;
+          maxTok = 4000;
+        } else if (contentType === "newsletter") {
+          lengthNote =
+            "Write a long-form newsletter edition of 1500 to 3000 words.";
+          maxTok = 5500;
+        }
+        const prompt = `Act as a content writer working on behalf of ${meta.label}, writing for ${meta.audience}.
 
 Using the outline below, write the content. ${lengthNote}
 
@@ -507,78 +816,97 @@ Rules:
 - Never use an em dash character. Use commas, periods, or parentheses instead.
 - End with a clear, low-pressure call to action.
 - Return only the finished content.`;
-  try {
-    const text = await callClaude(prompt, 3000);
-    document.getElementById('draft').value = text;
-    document.getElementById('to-step-4').disabled = false;
-    setStatus('status-3', 'Draft ready.');
-    saveCurrent('draft written');
-  } catch (e) {
-    setStatus('status-3', 'Something went wrong generating the draft.');
-  }
-}
+        try {
+          const text = await callClaude(prompt, maxTok);
+          document.getElementById("draft").value = text;
+          document.getElementById("to-step-4").disabled = false;
+          setStatus("status-3", "Draft ready.");
+          saveCurrent("draft written");
+        } catch (e) {
+          setStatus("status-3", "Something went wrong generating the draft.");
+        }
+      }
 
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+      function escapeHtml(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
 
-function scanDraft() {
-  const draft = document.getElementById('draft').value;
-  if (!document.getElementById('final').value) {
-    document.getElementById('final').value = draft;
-  }
-  let html = escapeHtml(draft);
-  let flagCount = 0;
+      function scanDraft() {
+        const draft = document.getElementById("draft").value;
+        if (!document.getElementById("final").value) {
+          document.getElementById("final").value = draft;
+        }
+        let html = escapeHtml(draft);
+        let flagCount = 0;
 
-  BANNED_PHRASES.forEach(p => {
-    const re = new RegExp('(' + p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-    html = html.replace(re, (m) => { flagCount++; return '<mark>' + m + '</mark>'; });
-  });
+        BANNED_PHRASES.forEach((p) => {
+          const re = new RegExp(
+            "(" + p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")",
+            "gi",
+          );
+          html = html.replace(re, (m) => {
+            flagCount++;
+            return "<mark>" + m + "</mark>";
+          });
+        });
 
-  const dashMatches = (draft.match(/—/g) || []).length;
-  flagCount += dashMatches;
-  html = html.replace(/—/g, '<mark class="dash">—</mark>');
+        const dashMatches = (draft.match(/—/g) || []).length;
+        flagCount += dashMatches;
+        html = html.replace(/—/g, '<mark class="dash">—</mark>');
 
-  document.getElementById('scan-view').innerHTML = html;
-  document.getElementById('flag-summary').textContent = flagCount === 0
-    ? 'No flagged phrases or em dashes found.'
-    : flagCount + ' flagged item(s): highlighted phrases plus em dashes shown in red.';
-  document.getElementById('polish-btn').disabled = flagCount === 0;
-}
+        document.getElementById("scan-view").innerHTML = html;
+        document.getElementById("flag-summary").textContent =
+          flagCount === 0
+            ? "No flagged phrases or em dashes found."
+            : flagCount +
+              " flagged item(s): highlighted phrases plus em dashes shown in red.";
+        document.getElementById("polish-btn").disabled = flagCount === 0;
+      }
 
-async function polishDraft() {
-  const draft = document.getElementById('final').value || document.getElementById('draft').value;
-  setStatus('status-4', 'Running polish pass...');
-  const prompt = `Rewrite the following article to remove cliche AI-sounding phrases (things like "it's important to note", "furthermore", "delve into", "game-changer", "seamless", "in today's landscape", "boasts", "testament to", etc.) and to remove every em dash character, replacing with commas, periods, or parentheses as grammar requires. Keep the writer's personal voice, opinions, and specific claims completely intact, only smooth out the flagged phrasing and dashes. Do not shorten it or add new content. Return only the rewritten article, nothing else.
+      async function polishDraft() {
+        const draft =
+          document.getElementById("final").value ||
+          document.getElementById("draft").value;
+        setStatus("status-4", "Running polish pass...");
+        const prompt = `Rewrite the following article to remove cliche AI-sounding phrases (things like "it's important to note", "furthermore", "delve into", "game-changer", "seamless", "in today's landscape", "boasts", "testament to", etc.) and to remove every em dash character, replacing with commas, periods, or parentheses as grammar requires. Keep the writer's personal voice, opinions, and specific claims completely intact, only smooth out the flagged phrasing and dashes. Do not shorten it or add new content. Return only the rewritten article, nothing else.
 
 ARTICLE:
 ${draft}`;
-  try {
-    const text = await callClaude(prompt, 3000);
-    document.getElementById('final').value = text;
-    setStatus('status-4', 'Polish pass complete. Review before shipping.');
-    document.getElementById('scan-view').innerHTML = '';
-    document.getElementById('flag-summary').textContent = 'Re-scan to confirm nothing is left.';
-    document.getElementById('polish-btn').disabled = true;
-  } catch (e) {
-    setStatus('status-4', 'Something went wrong during the polish pass.');
-  }
-}
+        try {
+          const text = await callClaude(prompt, 3000);
+          document.getElementById("final").value = text;
+          setStatus(
+            "status-4",
+            "Polish pass complete. Review before shipping.",
+          );
+          document.getElementById("scan-view").innerHTML = "";
+          document.getElementById("flag-summary").textContent =
+            "Re-scan to confirm nothing is left.";
+          document.getElementById("polish-btn").disabled = true;
+        } catch (e) {
+          setStatus("status-4", "Something went wrong during the polish pass.");
+        }
+      }
 
-function copyFinal() {
-  const text = document.getElementById('final').value;
-  navigator.clipboard.writeText(text).then(() => setStatus('status-4', 'Copied to clipboard.'));
-}
+      function copyFinal() {
+        const text = document.getElementById("final").value;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => setStatus("status-4", "Copied to clipboard."));
+      }
 
-function saveFinal() {
-  saveCurrent('cleared');
-  setStatus('status-4', 'Saved as cleared.');
-}
+      function saveFinal() {
+        saveCurrent("cleared");
+        setStatus("status-4", "Saved as cleared.");
+      }
 
-(async function init() {
-  await loadIndex();
-  applyState(emptyDraft());
-})();
-</script>
-</body>
+      (async function init() {
+        await loadIndex();
+        applyState(emptyDraft());
+      })();
+    </script>
+  </body>
 </html>
