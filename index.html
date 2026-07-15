@@ -185,14 +185,17 @@
             <select id="client-type">
               <option value="contractor">Contractor / home improvement</option>
               <option value="realtor">Realtor / real estate agent</option>
+              <option value="technology">Technology / SaaS</option>
             </select>
           </div>
           <div>
             <label>Content type</label>
-            <select id="content-type">
+            <select id="content-type" onchange="toggleFormatFields()">
               <option value="blog">Blog post (their website / SEO)</option>
               <option value="spotlight">Project or listing spotlight</option>
-              <option value="social">Social media caption set</option>
+              <option value="social">Social media caption set (short, mixed)</option>
+              <option value="instagram">Instagram post set (~300 words each)</option>
+              <option value="newsletter">Newsletter, long form (1500-3000 words)</option>
             </select>
           </div>
         </div>
@@ -215,10 +218,10 @@
       <div class="panel step-panel" id="panel-2" style="display:none">
         <h2>Your editorial angle</h2>
         <p style="font-size:13px;color:#6b6a66">This is the personal take that makes it yours. Pick a lens or write your own.</p>
-        <div>
-          <span class="chip" onclick="insertChip('behind')">Honest cost breakdown</span>
-          <span class="chip" onclick="insertChip('legacy')">Behind the scenes reality</span>
-          <span class="chip" onclick="insertChip('blindspot')">What they don't ask but should</span>
+        <div id="chip-row">
+          <span class="chip" data-kind="behind">Honest cost breakdown</span>
+          <span class="chip" data-kind="legacy">Behind the scenes reality</span>
+          <span class="chip" data-kind="blindspot">What they don't ask but should</span>
         </div>
         <label>Your hot take / hands-on diagnosis</label>
         <textarea id="personal-input" style="min-height:160px" placeholder="What do you actually think here? Where does the framework break down in real teams? What's the frontline reality nobody puts in a vendor datasheet?"></textarea>
@@ -231,6 +234,12 @@
       <!-- STEP 3 -->
       <div class="panel step-panel" id="panel-3" style="display:none">
         <h2>Write the article</h2>
+        <div class="row" id="ig-count-wrap" style="display:none">
+          <div>
+            <label>Number of posts</label>
+            <input type="number" id="ig-count" min="5" max="10" value="7">
+          </div>
+        </div>
         <div class="actions">
           <button onclick="generateDraft()">Generate draft</button>
         </div>
@@ -285,6 +294,25 @@ const BANNED_PHRASES = [
   "not only... but also"
 ];
 
+// Chip suggestions for the personal-angle step, tailored per client type
+const CHIP_TEXT = {
+  contractor: {
+    behind: "Here's what most quotes leave out: ",
+    legacy: "What actually happens on site that clients never see: ",
+    blindspot: "The question I wish more clients asked before hiring: "
+  },
+  realtor: {
+    behind: "Here's what most listing sheets leave out: ",
+    legacy: "What actually happens behind the scenes of this deal that clients never see: ",
+    blindspot: "The question I wish more buyers/sellers asked before signing: "
+  },
+  technology: {
+    behind: "Here's what most vendor datasheets leave out: ",
+    legacy: "What actually happens under the hood, or on the support side, that customers never see: ",
+    blindspot: "The question I wish more prospects asked before buying: "
+  }
+};
+
 function uid() { return 'd' + Date.now(); }
 
 function emptyDraft() {
@@ -325,6 +353,7 @@ function getState() {
     topicNotes: document.getElementById('topic-notes').value,
     outline: document.getElementById('outline').value,
     personalInput: document.getElementById('personal-input').value,
+    igCount: document.getElementById('ig-count').value,
     draft: document.getElementById('draft').value,
     final: document.getElementById('final').value,
     step: currentStep,
@@ -336,6 +365,8 @@ function applyState(s) {
   currentId = s.id;
   document.getElementById('client-type').value = s.clientType || 'contractor';
   document.getElementById('content-type').value = s.contentType || 'blog';
+  document.getElementById('ig-count').value = s.igCount || 7;
+  toggleFormatFields();
   document.getElementById('topic').value = s.topic || '';
   document.getElementById('topic-notes').value = s.topicNotes || '';
   document.getElementById('outline').value = s.outline || '';
@@ -438,17 +469,40 @@ function goStep(n, skipSave) {
     if (i === n) tab.classList.add('active');
     else if (i < n) tab.classList.add('done');
   }
+  if (n === 2) renderChips();
+}
+
+function renderChips() {
+  const clientType = document.getElementById('client-type').value;
+  const chipMap = CHIP_TEXT[clientType] || CHIP_TEXT.contractor;
+  const row = document.getElementById('chip-row');
+  row.innerHTML = '';
+  const labels = {
+    behind: clientType === 'technology' ? 'Honest limitations breakdown' : 'Honest cost breakdown',
+    legacy: 'Behind the scenes reality',
+    blindspot: "What they don't ask but should"
+  };
+  Object.keys(chipMap).forEach(kind => {
+    const span = document.createElement('span');
+    span.className = 'chip';
+    span.textContent = labels[kind];
+    span.onclick = () => insertChip(kind);
+    row.appendChild(span);
+  });
 }
 
 function insertChip(kind) {
-  const map = {
-    behind: "Here's what most quotes leave out: ",
-    legacy: "What actually happens on site that clients never see: ",
-    blindspot: "The question I wish more clients asked before hiring: "
-  };
+  const clientType = document.getElementById('client-type').value;
+  const chipMap = CHIP_TEXT[clientType] || CHIP_TEXT.contractor;
   const ta = document.getElementById('personal-input');
-  ta.value = (ta.value ? ta.value + '\n\n' : '') + map[kind];
+  ta.value = (ta.value ? ta.value + '\n\n' : '') + chipMap[kind];
   ta.focus();
+}
+
+function clientMeta(type) {
+  if (type === 'realtor') return { label: 'a realtor / real estate agent', audience: 'home buyers or sellers' };
+  if (type === 'technology') return { label: 'a technology / SaaS company', audience: 'prospective business customers, who may or may not be technical' };
+  return { label: 'a contractor / home improvement business', audience: 'homeowners' };
 }
 
 async function generateOutline() {
@@ -458,17 +512,17 @@ async function generateOutline() {
   const notes = document.getElementById('topic-notes').value.trim();
   const clientType = document.getElementById('client-type').value;
   const contentType = document.getElementById('content-type').value;
-  const clientLabel = clientType === 'realtor' ? 'a realtor / real estate agent' : 'a contractor / home improvement business';
+  const meta = clientMeta(clientType);
   const contentLabel = contentType === 'blog' ? 'a blog post for their website' : contentType === 'spotlight' ? 'a project or listing spotlight piece' : 'a set of social media captions';
-  const prompt = `Act as a content marketer writing on behalf of ${clientLabel}. Create a detailed outline for ${contentLabel} on: "${topic}".
+  const prompt = `Act as a content marketer writing on behalf of ${meta.label}. Create a detailed outline for ${contentLabel} on: "${topic}".
 ${notes ? 'Additional context to incorporate: ' + notes : ''}
 
 Structure the outline in exactly these 5 stages:
-1. The Relatable Hook: a real pain point, worry, or question the reader (a homeowner or a buyer/seller) already has.
-2. The Credibility Proof: specifics that show real expertise (materials, process, standards, numbers, before/after detail) without sounding like a brag sheet.
+1. The Relatable Hook: a real pain point, worry, or question the reader (${meta.audience}) already has.
+2. The Credibility Proof: specifics that show real expertise (materials, process, standards, numbers, before/after detail, case results) without sounding like a brag sheet.
 3. The Personal Touch (leave this as a placeholder labeled "[WRITER'S PERSONAL TAKE GOES HERE]" - do not write this section, the writer will supply their own story or angle).
 4. The Practical Breakdown: what this actually means for the reader in plain terms (cost, timeline, what to ask for, what to watch out for).
-5. The Call to Action: a natural, non-pushy next step (contact, visit, schedule a walkthrough).
+5. The Call to Action: a natural, non-pushy next step (contact, visit, schedule a walkthrough, book a demo).
 
 Keep it as a scannable bulleted outline, not prose. If the content type is social captions, outline it as a short sequence of caption beats instead of long sections.`;
   try {
@@ -482,6 +536,11 @@ Keep it as a scannable bulleted outline, not prose. If the content type is socia
   }
 }
 
+function toggleFormatFields() {
+  const ct = document.getElementById('content-type').value;
+  document.getElementById('ig-count-wrap').style.display = (ct === 'instagram') ? 'block' : 'none';
+}
+
 async function generateDraft() {
   const outline = document.getElementById('outline').value.trim();
   const personal = document.getElementById('personal-input').value.trim();
@@ -490,9 +549,20 @@ async function generateDraft() {
   setStatus('status-3', 'Writing draft...');
   const clientType = document.getElementById('client-type').value;
   const contentType = document.getElementById('content-type').value;
-  const clientLabel = clientType === 'realtor' ? 'a realtor / real estate agent' : 'a contractor / home improvement business';
-  const lengthNote = contentType === 'social' ? 'Write 4-6 short standalone captions (1-3 sentences each), not one long piece.' : 'Write a polished piece of no more than 900 words.';
-  const prompt = `Act as a content writer working on behalf of ${clientLabel}, writing for homeowners or home buyers/sellers who are not industry experts.
+  const meta = clientMeta(clientType);
+  let lengthNote = 'Write a polished piece of no more than 900 words.';
+  let maxTok = 3000;
+  if (contentType === 'social') {
+    lengthNote = 'Write 4-6 short standalone captions (1-3 sentences each), not one long piece.';
+  } else if (contentType === 'instagram') {
+    const count = document.getElementById('ig-count').value || 7;
+    lengthNote = `Write ${count} separate Instagram posts (roughly 300 words each) based on this outline, each covering a distinct angle or stage of it so the set reads as a mini-series. Number each post clearly (Post 1, Post 2, etc.) and end each with a short call to action or question.`;
+    maxTok = 4000;
+  } else if (contentType === 'newsletter') {
+    lengthNote = 'Write a long-form newsletter edition of 1500 to 3000 words.';
+    maxTok = 5500;
+  }
+  const prompt = `Act as a content writer working on behalf of ${meta.label}, writing for ${meta.audience}.
 
 Using the outline below, write the content. ${lengthNote}
 
@@ -508,7 +578,7 @@ Rules:
 - End with a clear, low-pressure call to action.
 - Return only the finished content.`;
   try {
-    const text = await callClaude(prompt, 3000);
+    const text = await callClaude(prompt, maxTok);
     document.getElementById('draft').value = text;
     document.getElementById('to-step-4').disabled = false;
     setStatus('status-3', 'Draft ready.');
