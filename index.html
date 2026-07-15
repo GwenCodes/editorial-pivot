@@ -258,64 +258,62 @@
           </button>
         </div>
 
-        <div class="main">
-          <div class="steps">
-            <div class="step-tab" id="tab-1" onclick="goStep(1)">
-              1. Outline
-            </div>
-            <div class="step-tab" id="tab-2" onclick="goStep(2)">
-              2. Editorial angle
-            </div>
-            <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
-            <div class="step-tab" id="tab-4" onclick="goStep(4)">
-              4. Clean and ship
-            </div>
-          </div>
+    <div class="sidebar">
+      <h3>Case files</h3>
+      <div id="draft-list"></div>
+      <button class="new-btn secondary" onclick="newDraft()">+ New draft</button>
+    </div>
 
-          <!-- STEP 1 -->
-          <div class="panel step-panel" id="panel-1">
-            <h2>Build the outline</h2>
-            <div class="row">
-              <div>
-                <label>Client type</label>
-                <select id="client-type">
-                  <option value="contractor">
-                    Contractor / home improvement
-                  </option>
-                  <option value="realtor">Realtor / real estate agent</option>
-                  <option value="technology">Technology / SaaS</option>
-                </select>
-              </div>
-              <div>
-                <label>Content type</label>
-                <select id="content-type" onchange="toggleFormatFields()">
-                  <option value="blog">Blog post (their website / SEO)</option>
-                  <option value="spotlight">
-                    Project or listing spotlight
-                  </option>
-                  <option value="social">
-                    Social media caption set (short, mixed)
-                  </option>
-                  <option value="instagram">
-                    Instagram post set (~300 words each)
-                  </option>
-                  <option value="newsletter">
-                    Newsletter, long form (1500-3000 words)
-                  </option>
-                </select>
-              </div>
-            </div>
-            <label>Topic / working headline</label>
-            <input
-              type="text"
-              id="topic"
-              placeholder="e.g. What a kitchen remodel actually costs in North Jersey this year"
-            />
-            <label>Anything specific to include (optional)</label>
-            <textarea
-              id="topic-notes"
-              style="min-height: 70px"
-              placeholder="a recent incident, a standard, a vendor, a stat..."
+    <div class="main">
+      <div class="steps">
+        <div class="step-tab" id="tab-1" onclick="goStep(1)">
+          1. Outline
+        </div>
+        <div class="step-tab" id="tab-2" onclick="goStep(2)">
+          2. Editorial angle
+        </div>
+        <div class="step-tab" id="tab-3" onclick="goStep(3)">3. Draft</div>
+        <div class="step-tab" id="tab-4" onclick="goStep(4)">
+          4. Clean and ship
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="panel step-panel" id="panel-1">
+        <h2>Build the outline</h2>
+        <div class="row">
+          <div>
+            <label>Client type</label>
+            <select id="client-type">
+              <option value="contractor">
+                Contractor / home improvement
+              </option>
+              <option value="realtor">Realtor / real estate agent</option>
+              <option value="technology">Technology / SaaS</option>
+            </select>
+          </div>
+          <div>
+            <label>Content type</label>
+            <select id="content-type" onchange="toggleFormatFields()">
+              <option value="blog">Blog post (their website / SEO)</option>
+              <option value="spotlight">
+                Project or listing spotlight
+              </option>
+              <option value="social">
+                Social media caption set (short, mixed)
+              </option>
+              <option value="instagram">
+                Instagram post set (~300 words each)
+              </option>
+              <option value="newsletter">
+                Newsletter, long form (1500-3000 words)
+              </option>
+            </select>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
             ></textarea>
             <div class="actions">
               <button onclick="generateOutline()">Generate outline</button>
@@ -484,6 +482,10 @@
         return "d" + Date.now();
       }
 
+      function uid() {
+        return "d" + Date.now();
+      }
+
       function emptyDraft() {
         return {
           id: uid(),
@@ -537,6 +539,28 @@
           step: currentStep,
           updatedAt: new Date().toISOString(),
         };
+      }
+
+      function applyState(s) {
+        currentId = s.id;
+        document.getElementById("client-type").value = s.clientType || "contractor";
+        document.getElementById("content-type").value = s.contentType || "blog";
+        document.getElementById("ig-count").value = s.igCount || 7;
+        toggleFormatFields();
+        document.getElementById("topic").value = s.topic || "";
+        document.getElementById("topic-notes").value = s.topicNotes || "";
+        document.getElementById("outline").value = s.outline || "";
+        document.getElementById("personal-input").value = s.personalInput || "";
+        document.getElementById("draft").value = s.draft || "";
+        document.getElementById("final").value = s.final || "";
+        document.getElementById("to-step-2").disabled = !s.outline;
+        document.getElementById("to-step-4").disabled = !s.draft;
+        document.getElementById("scan-view").textContent = "";
+        document.getElementById("flag-summary").textContent = "";
+        document.getElementById("polish-btn").disabled = true;
+        goStep(s.step || 1, true);
+        document.getElementById("doc-status").textContent =
+          (s.topic || "untitled") + " — " + (s.status || "draft");
       }
 
       function applyState(s) {
@@ -745,7 +769,7 @@
               ? "a project or listing spotlight piece"
               : "a set of social media captions";
         const prompt = `Act as a content marketer writing on behalf of ${meta.label}. Create a detailed outline for ${contentLabel} on: "${topic}".
-${notes ? "Additional context to incorporate: " + notes : ""}
+${notes ? "Additional context to incorporate: " + notes : ""}`
 
 Structure the outline in exactly these 5 stages:
 1. The Relatable Hook: a real pain point, worry, or question the reader (${meta.audience}) already has.
